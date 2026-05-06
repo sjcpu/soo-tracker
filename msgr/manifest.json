@@ -1,0 +1,22 @@
+{
+  "name": "내기 다이어트",
+  "short_name": "내기다이어트",
+  "description": "친구와 함께하는 다이어트 내기 트래커",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/c8f135/000000?text=🏋️",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/c8f135/000000?text=🏋️",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
