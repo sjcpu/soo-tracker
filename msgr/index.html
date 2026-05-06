@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f0f0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="내기다이어트" />
+  <link rel="manifest" href="manifest.json" />
+  <title>내기 다이어트</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #222222;
+      --border: #2e2e2e;
+      --accent: #c8f135;
+      --accent2: #ff4d6d;
+      --text: #f0f0f0;
+      --muted: #777;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overscroll-behavior: none;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #111;
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 10px; font-family: 'Noto Sans KR', sans-serif;
+      padding: 6px 0; transition: color .2s;
+    }
+    .nav-btn.active { color: var(--accent); }
+    .nav-btn svg { width: 22px; height: 22px; }
+
+    /* ── PAGES ── */
+    .page { display: none; padding: 0 16px 100px; padding-top: calc(env(safe-area-inset-top) + 16px); }
+    .page.active { display: block; }
+
+    /* ── HEADER ── */
+    .page-header {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+    .page-sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
+    }
+
+    /* ── HOME ── */
+    .bet-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #000;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .round-tabs {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .round-tab {
+      flex: 1; padding: 10px; border-radius: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      cursor: pointer; text-align: center; transition: all .2s;
+    }
+    .round-tab.active {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .round-tab.active .rt-label, .round-tab.active .rt-status { color: #000 !important; }
+    .rt-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--muted); }
+    .rt-status { font-size: 12px; font-weight: 500; color: var(--text); margin-top: 2px; }
+
+    .stat-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .stat-box {
+      flex: 1; background: var(--surface2); border-radius: 12px;
+      padding: 14px 12px; text-align: center;
+    }
+    .stat-val {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+      color: var(--accent); line-height: 1;
+    }
+    .stat-unit { font-size: 14px; color: var(--muted); }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .progress-wrap { margin-bottom: 8px; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--accent); border-radius: 4px;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-fill.danger { background: var(--accent2); }
+
+    .dday-row { display: flex; gap: 8px; }
+    .dday-box {
+      flex: 1; background: var(--surface2); border-radius: 12px;
+      padding: 12px; display: flex; flex-direction: column; align-items: center;
+    }
+    .dday-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--text);
+    }
+    .dday-label { font-size: 10px; color: var(--muted); text-align: center; margin-top: 2px; }
+
+    .checkin-list { display: flex; flex-direction: column; gap: 8px; }
+    .checkin-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface2); border-radius: 12px; padding: 12px 14px;
+    }
+    .checkin-month { font-size: 13px; font-weight: 500; }
+    .checkin-weight { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); }
+    .checkin-diff { font-size: 11px; color: var(--muted); text-align: right; }
+    .checkin-diff.good { color: #4ade80; }
+    .checkin-diff.bad { color: var(--accent2); }
+    .badge-done {
+      font-size: 10px; font-weight: 700; letter-spacing: .5px;
+      background: #4ade8022; color: #4ade80; border: 1px solid #4ade8044;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .badge-miss {
+      font-size: 10px; font-weight: 700;
+      background: #ff4d6d22; color: var(--accent2); border: 1px solid #ff4d6d44;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .badge-wait {
+      font-size: 10px; color: var(--muted);
+      background: var(--border); padding: 2px 8px; border-radius: 20px;
+    }
+
+    /* ── WEIGHT LOG ── */
+    .input-group { margin-bottom: 14px; }
+    .input-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: block; }
+    .input-row { display: flex; gap: 8px; }
+    input[type=number], input[type=date], input[type=text], textarea, select {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 12px 14px;
+      font-size: 15px; font-family: 'Noto Sans KR', sans-serif;
+      width: 100%; outline: none;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    input[type=number]:focus, input[type=date]:focus, input[type=text]:focus,
+    textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+    input[type=date]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(.4); }
+    select option { background: var(--surface2); }
+
+    .btn {
+      width: 100%; padding: 14px; border-radius: 12px;
+      background: var(--accent); color: #000;
+      font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 700;
+      border: none; cursor: pointer; transition: opacity .2s, transform .1s;
+    }
+    .btn:active { transform: scale(.98); opacity: .85; }
+    .btn.secondary {
+      background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+    }
+    .btn.danger { background: var(--accent2); color: #fff; }
+
+    .weight-graph {
+      height: 120px; position: relative; margin: 8px 0 4px;
+      display: flex; align-items: flex-end; gap: 4px;
+    }
+    .wg-bar-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; height: 100%; justify-content: flex-end;
+    }
+    .wg-bar {
+      width: 100%; border-radius: 4px 4px 0 0;
+      background: var(--accent); opacity: .7;
+      transition: height .5s cubic-bezier(.4,0,.2,1);
+      min-height: 4px;
+    }
+    .wg-bar.start { background: var(--muted); opacity: 1; }
+    .wg-bar.target { background: var(--accent2); opacity: .6; }
+    .wg-label { font-size: 9px; color: var(--muted); }
+
+    /* ── DIARY ── */
+    .diary-filter {
+      display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .diary-filter::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      white-space: nowrap; padding: 6px 14px;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: none; color: var(--muted); font-size: 13px;
+      cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+      transition: all .2s;
+    }
+    .filter-chip.active {
+      background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700;
+    }
+
+    .diary-form {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    }
+    .emoji-picker {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .emoji-btn {
+      font-size: 22px; background: var(--surface2); border: 2px solid transparent;
+      border-radius: 10px; padding: 6px 10px; cursor: pointer;
+      transition: border-color .15s, transform .1s;
+    }
+    .emoji-btn.selected { border-color: var(--accent); transform: scale(1.1); }
+    .category-chips {
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }
+    .cat-chip {
+      padding: 6px 14px; border-radius: 20px;
+      border: 1px solid var(--border); background: none;
+      color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .5px;
+      cursor: pointer; font-family: 'Noto Sans KR', sans-serif; transition: all .15s;
+    }
+    .cat-chip.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+    textarea { resize: none; height: 72px; }
+
+    .diary-entry {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn {
+      from { opacity:0; transform: translateY(8px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+    .entry-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+    }
+    .entry-cat {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .entry-cat.식단 { background: #fbbf2422; color: #fbbf24; border: 1px solid #fbbf2444; }
+    .entry-cat.운동 { background: #60a5fa22; color: #60a5fa; border: 1px solid #60a5fa44; }
+    .entry-cat.기타 { background: #a78bfa22; color: #a78bfa; border: 1px solid #a78bfa44; }
+    .entry-date { font-size: 11px; color: var(--muted); }
+    .entry-emoji { font-size: 28px; margin-bottom: 6px; }
+    .entry-text { font-size: 14px; line-height: 1.6; color: #ddd; }
+    .entry-delete {
+      background: none; border: none; color: var(--muted); font-size: 16px;
+      cursor: pointer; padding: 2px 6px; border-radius: 6px;
+    }
+    .entry-delete:active { color: var(--accent2); }
+
+    /* ── SETTINGS ── */
+    .section-divider {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      color: var(--muted); text-transform: uppercase;
+      margin: 20px 0 10px; padding-left: 2px;
+    }
+    .result-verdict {
+      text-align: center; padding: 24px 16px;
+      border-radius: var(--radius); margin-bottom: 12px;
+    }
+    .result-verdict.win { background: #4ade8011; border: 1px solid #4ade8033; }
+    .result-verdict.lose { background: #ff4d6d11; border: 1px solid #ff4d6d33; }
+    .result-verdict.pending { background: var(--surface); border: 1px solid var(--border); }
+    .verdict-emoji { font-size: 48px; margin-bottom: 8px; }
+    .verdict-label { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; }
+    .verdict-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .toggle-label { font-size: 14px; }
+    .toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .toggle {
+      width: 44px; height: 26px; background: var(--border);
+      border-radius: 13px; position: relative; cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle.on { background: var(--accent); }
+    .toggle::after {
+      content: ''; position: absolute; width: 20px; height: 20px;
+      background: #fff; border-radius: 50%; top: 3px; left: 3px;
+      transition: transform .2s;
+    }
+    .toggle.on::after { transform: translateX(18px); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: #000a;
+      z-index: 200; display: none; align-items: flex-end;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 24px 24px 0 0;
+      width: 100%; padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+      max-height: 90dvh; overflow-y: auto;
+    }
+    .modal-handle {
+      width: 40px; height: 4px; background: var(--border);
+      border-radius: 2px; margin: 0 auto 20px;
+    }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 16px; }
+
+    /* toast */
+    .toast {
+      position: fixed; top: calc(env(safe-area-inset-top) + 12px); left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--accent); color: #000;
+      font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 20px;
+      z-index: 500; transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .empty-state {
+      text-align: center; padding: 40px 16px; color: var(--muted);
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .empty-text { font-size: 14px; line-height: 1.6; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    /* penalty summary */
+    .penalty-card {
+      background: #ff4d6d11; border: 1px solid #ff4d6d33;
+      border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+    }
+    .penalty-amount {
+      font-family: 'Bebas Neue', sans-serif; font-size: 36px;
+      color: var(--accent2);
+    }
+    .penalty-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════ PAGE: HOME ════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="page-header">내기 현황</div>
+  <div class="page-sub">오늘도 화이팅 🔥</div>
+
+  <div id="no-setup" style="display:none">
+    <div class="empty-state">
+      <div class="empty-icon">⚙️</div>
+      <div class="empty-text">먼저 설정 탭에서<br>내기 정보를 입력해주세요</div>
+    </div>
+  </div>
+
+  <div id="home-content">
+    <!-- D-DAY -->
+    <div class="card">
+      <div class="card-title">📅 남은 시간</div>
+      <div class="dday-row">
+        <div class="dday-box">
+          <div class="dday-num" id="dday1">—</div>
+          <div class="dday-label">1차 마감<br><span id="dday1-date" style="font-size:9px">—</span></div>
+        </div>
+        <div class="dday-box">
+          <div class="dday-num" id="dday2">—</div>
+          <div class="dday-label">2차 마감<br><span id="dday2-date" style="font-size:9px">—</span></div>
+        </div>
+        <div class="dday-box">
+          <div class="dday-num" id="diary-streak">0</div>
+          <div class="dday-label">연속 인증<br>일수</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 라운드 탭 -->
+    <div class="round-tabs">
+      <div class="round-tab active" id="rtab1" onclick="selectRound(1)">
+        <div class="rt-label">1차 내기</div>
+        <div class="rt-status" id="r1-status">목표 감량</div>
+      </div>
+      <div class="round-tab" id="rtab2" onclick="selectRound(2)">
+        <div class="rt-label">2차 내기</div>
+        <div class="rt-status" id="r2-status">체중 유지</div>
+      </div>
+    </div>
+
+    <!-- 진행률 -->
+    <div class="card" id="round1-panel">
+      <div class="card-title">⚖️ 감량 진행률</div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-val"><span id="cur-weight">—</span><span class="stat-unit">kg</span></div>
+          <div class="stat-label">현재 몸무게</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val"><span id="remain-kg">—</span><span class="stat-unit">kg</span></div>
+          <div class="stat-label">목표까지</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="start-kg-label">시작: —kg</span>
+          <span id="pct-label">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:10px;color:var(--muted)"></span>
+          <span style="font-size:10px;color:var(--muted)">목표: <span id="target-kg-label">—kg</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="round2-panel" style="display:none">
+      <div class="card-title">🏆 유지 현황</div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-val"><span id="r2-cur-weight">—</span><span class="stat-unit">kg</span></div>
+          <div class="stat-label">현재 몸무게</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val"><span id="r2-allowance">±<span id="r2-allow-val">—</span></span><span class="stat-unit">kg</span></div>
+          <div class="stat-label">허용 편차</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>유지 기간</span><span id="r2-pct-label">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="r2-progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 중간 체크인 -->
+    <div class="card">
+      <div class="card-title">📊 월별 체크인</div>
+      <div class="checkin-list" id="checkin-list">
+        <div style="color:var(--muted);font-size:13px">설정 후 체크인이 표시됩니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PAGE: WEIGHT ════════════════════════════════ -->
+<div class="page" id="page-weight">
+  <div class="page-header">몸무게</div>
+  <div class="page-sub">기록하고 추이를 확인하세요</div>
+
+  <div class="card">
+    <div class="card-title">⚖️ 몸무게 기록하기</div>
+    <div class="input-group">
+      <label class="input-label">오늘 몸무게 (kg)</label>
+      <div class="input-row">
+        <input type="number" id="weight-input" placeholder="예: 72.5" step="0.1" min="30" max="200" style="flex:1" />
+        <button class="btn" style="width:auto;padding:12px 20px" onclick="logWeight()">기록</button>
+      </div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">날짜 (기본: 오늘)</label>
+      <input type="date" id="weight-date" />
+    </div>
+  </div>
+
+  <!-- 그래프 -->
+  <div class="card">
+    <div class="card-title">📈 추이 그래프</div>
+    <div class="weight-graph" id="weight-graph">
+      <div class="empty-state" style="width:100%;padding:16px 0">
+        <div class="empty-icon" style="font-size:28px">📊</div>
+        <div class="empty-text" style="font-size:12px">기록이 쌓이면 그래프가 표시됩니다</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기록 목록 -->
+  <div class="card">
+    <div class="card-title">🗓️ 기록 목록</div>
+    <div id="weight-list">
+      <div class="empty-state"><div class="empty-text" style="font-size:12px">아직 기록이 없어요</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PAGE: DIARY ════════════════════════════════ -->
+<div class="page" id="page-diary">
+  <div class="page-header">과정 인증</div>
+  <div class="page-sub">오늘 어떤 노력을 했나요?</div>
+
+  <!-- 작성 폼 -->
+  <div class="diary-form">
+    <div class="card-title" style="margin-bottom:10px">✍️ 오늘의 인증</div>
+    <div class="category-chips">
+      <button class="cat-chip active" id="cat-식단" onclick="selectCat('식단')">🥗 식단</button>
+      <button class="cat-chip" id="cat-운동" onclick="selectCat('운동')">💪 운동</button>
+      <button class="cat-chip" id="cat-기타" onclick="selectCat('기타')">✨ 기타</button>
+    </div>
+    <div class="emoji-picker" id="emoji-picker">
+      <button class="emoji-btn selected" onclick="selectEmoji('💪')">💪</button>
+      <button class="emoji-btn" onclick="selectEmoji('🥗')">🥗</button>
+      <button class="emoji-btn" onclick="selectEmoji('🏃')">🏃</button>
+      <button class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
+      <button class="emoji-btn" onclick="selectEmoji('😤')">😤</button>
+      <button class="emoji-btn" onclick="selectEmoji('🥵')">🥵</button>
+      <button class="emoji-btn" onclick="selectEmoji('🥳')">🥳</button>
+      <button class="emoji-btn" onclick="selectEmoji('😭')">😭</button>
+    </div>
+    <textarea id="diary-text" placeholder="오늘의 노력을 한 줄로 남겨보세요..."></textarea>
+    <div style="margin-top:10px">
+      <button class="btn" onclick="addDiary()">인증 등록</button>
+    </div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="diary-filter">
+    <button class="filter-chip active" onclick="filterDiary('all', this)">전체</button>
+    <button class="filter-chip" onclick="filterDiary('식단', this)">🥗 식단</button>
+    <button class="filter-chip" onclick="filterDiary('운동', this)">💪 운동</button>
+    <button class="filter-chip" onclick="filterDiary('기타', this)">✨ 기타</button>
+  </div>
+
+  <div id="diary-list">
+    <div class="empty-state">
+      <div class="empty-icon">📝</div>
+      <div class="empty-text">아직 인증이 없어요<br>오늘의 노력을 기록해보세요!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PAGE: SETTINGS ════════════════════════════════ -->
+<div class="page" id="page-settings">
+  <div class="page-header">설정</div>
+  <div class="page-sub">내기 조건을 설정하세요</div>
+
+  <!-- 내기 기본 설정 -->
+  <div class="card">
+    <div class="card-title">👤 내 정보</div>
+    <div class="input-group">
+      <label class="input-label">닉네임</label>
+      <input type="text" id="set-name" placeholder="예: 철수" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">현재 몸무게 (kg)</label>
+      <input type="number" id="set-start-weight" placeholder="예: 80.0" step="0.1" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">목표 몸무게 (kg)</label>
+      <input type="number" id="set-target-weight" placeholder="예: 70.0" step="0.1" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 1차 내기 — 목표 감량</div>
+    <div class="input-group">
+      <label class="input-label">시작일</label>
+      <input type="date" id="set-start-date" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">마감일</label>
+      <input type="date" id="set-end1-date" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">월별 중간 체크인 활성화</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <div class="toggle on" id="checkin-toggle" onclick="toggleCheckin()"></div>
+        <span style="font-size:13px;color:var(--muted)">매월 1일 자동 체크인 알림</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 2차 내기 — 유지 확인</div>
+    <div class="input-group">
+      <label class="input-label">2차 마감일 (기본: 12/31)</label>
+      <input type="date" id="set-end2-date" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">허용 편차 (±kg)</label>
+      <input type="number" id="set-allowance" placeholder="예: 1.5" step="0.5" value="1.5" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 벌금 설정</div>
+    <div class="input-group">
+      <label class="input-label">1차 벌금 (원)</label>
+      <input type="number" id="set-penalty1" placeholder="예: 50000" step="1000" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">2차 벌금 (원)</label>
+      <input type="number" id="set-penalty2" placeholder="예: 50000" step="1000" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">벌금 사용처 (메모)</label>
+      <input type="text" id="set-penalty-use" placeholder="예: 치킨 사주기, 기부 등" />
+    </div>
+  </div>
+
+  <button class="btn" onclick="saveSettings()" style="margin-bottom:12px">💾 설정 저장</button>
+
+  <!-- 결과 확인 -->
+  <div class="section-divider">결과 확인</div>
+
+  <div class="card">
+    <div class="card-title">🎯 1차 내기 결과 입력</div>
+    <div class="input-group">
+      <label class="input-label">최종 몸무게 (kg)</label>
+      <input type="number" id="result1-weight" placeholder="예: 71.0" step="0.1" />
+    </div>
+    <button class="btn secondary" onclick="checkResult1()">1차 결과 확인</button>
+  </div>
+
+  <div id="verdict1-wrap"></div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="card-title">🏆 2차 내기 결과 입력</div>
+    <div class="input-group">
+      <label class="input-label">12/31 몸무게 (kg)</label>
+      <input type="number" id="result2-weight" placeholder="예: 71.5" step="0.1" />
+    </div>
+    <button class="btn secondary" onclick="checkResult2()">2차 결과 확인</button>
+  </div>
+
+  <div id="verdict2-wrap"></div>
+
+  <!-- 데이터 관리 -->
+  <div class="section-divider">데이터</div>
+  <button class="btn secondary" onclick="exportData()" style="margin-bottom:8px">📤 데이터 내보내기</button>
+  <button class="btn danger" onclick="confirmReset()">🗑️ 전체 초기화</button>
+  <div style="height:8px"></div>
+</div>
+
+<!-- ════════════════════════════════ BOTTOM NAV ════════════════════════════════ -->
+<nav class="nav">
+  <button class="nav-btn active" id="nav-home" onclick="goPage('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>홈
+  </button>
+  <button class="nav-btn" id="nav-weight" onclick="goPage('weight')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+    </svg>몸무게
+  </button>
+  <button class="nav-btn" id="nav-diary" onclick="goPage('diary')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>인증
+  </button>
+  <button class="nav-btn" id="nav-settings" onclick="goPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>설정
+  </button>
+</nav>
+
+<!-- ════════════════════════════════ RESET MODAL ════════════════════════════════ -->
+<div class="modal-overlay" id="reset-modal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">전체 초기화</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+      모든 데이터(몸무게 기록, 인증, 설정)가 삭제됩니다.<br>이 작업은 되돌릴 수 없어요.
+    </p>
+    <button class="btn danger" onclick="doReset()">정말 초기화하기</button>
+    <button class="btn secondary" style="margin-top:8px" onclick="closeModal()">취소</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER
+// ══════════════════════════════════════════════
+const KEYS = {
+  settings: 'diet_settings',
+  weights: 'diet_weights',
+  diary: 'diet_diary',
+};
+
+function load(key) {
+  try { return JSON.parse(localStorage.getItem(KEYS[key])) || null; } catch { return null; }
+}
+function save(key, val) {
+  localStorage.setItem(KEYS[key], JSON.stringify(val));
+}
+
+// default state
+let settings = load('settings') || {};
+let weights = load('weights') || [];   // [{date, weight}]
+let diary = load('diary') || [];       // [{id, date, cat, emoji, text}]
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'weight') renderWeightPage();
+  if (name === 'diary') renderDiary(currentFilter);
+  if (name === 'settings') loadSettingsForm();
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════════
+let currentRound = 1;
+
+function selectRound(n) {
+  currentRound = n;
+  document.getElementById('rtab1').classList.toggle('active', n === 1);
+  document.getElementById('rtab2').classList.toggle('active', n === 2);
+  document.getElementById('round1-panel').style.display = n === 1 ? '' : 'none';
+  document.getElementById('round2-panel').style.display = n === 2 ? '' : 'none';
+}
+
+function renderHome() {
+  const s = settings;
+  const hasSetup = s.startWeight && s.targetWeight && s.end1Date;
+
+  document.getElementById('no-setup').style.display = hasSetup ? 'none' : 'block';
+  document.getElementById('home-content').style.display = hasSetup ? 'block' : 'none';
+
+  if (!hasSetup) return;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // D-days
+  function dday(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr); d.setHours(0,0,0,0);
+    const diff = Math.ceil((d - today) / 86400000);
+    if (diff < 0) return 'D+' + Math.abs(diff);
+    if (diff === 0) return 'D-Day';
+    return 'D-' + diff;
+  }
+  document.getElementById('dday1').textContent = dday(s.end1Date);
+  document.getElementById('dday1-date').textContent = s.end1Date || '—';
+  document.getElementById('dday2').textContent = dday(s.end2Date);
+  document.getElementById('dday2-date').textContent = s.end2Date || '—';
+
+  // streak
+  const sorted = [...diary].sort((a,b) => b.date.localeCompare(a.date));
+  let streak = 0, cur = new Date(today);
+  const diaryDates = new Set(diary.map(d => d.date));
+  while (true) {
+    const ds = cur.toISOString().split('T')[0];
+    if (diaryDates.has(ds)) { streak++; cur.setDate(cur.getDate() - 1); }
+    else break;
+  }
+  document.getElementById('diary-streak').textContent = streak;
+
+  // current weight (latest log)
+  const latestW = weights.length ? [...weights].sort((a,b) => b.date.localeCompare(a.date))[0].weight : s.startWeight;
+  const start = parseFloat(s.startWeight);
+  const target = parseFloat(s.targetWeight);
+  const cur_w = parseFloat(latestW);
+
+  // 1차
+  const totalDiff = start - target;
+  const doneDiff = start - cur_w;
+  const pct = totalDiff > 0 ? Math.min(100, Math.max(0, (doneDiff / totalDiff) * 100)) : 0;
+  document.getElementById('cur-weight').textContent = cur_w.toFixed(1);
+  document.getElementById('remain-kg').textContent = Math.max(0, cur_w - target).toFixed(1);
+  document.getElementById('start-kg-label').textContent = '시작: ' + start.toFixed(1) + 'kg';
+  document.getElementById('target-kg-label').textContent = target.toFixed(1) + 'kg';
+  document.getElementById('pct-label').textContent = Math.round(pct) + '%';
+  const fill = document.getElementById('progress-fill');
+  fill.style.width = pct + '%';
+  fill.className = 'progress-fill' + (pct < 30 ? ' danger' : '');
+
+  // round status labels
+  document.getElementById('r1-status').textContent = pct >= 100 ? '✅ 달성!' : Math.round(pct) + '% 달성';
+
+  // 2차
+  document.getElementById('r2-cur-weight').textContent = cur_w.toFixed(1);
+  document.getElementById('r2-allow-val').textContent = s.allowance || '1.5';
+
+  if (s.end1Date && s.end2Date) {
+    const e1 = new Date(s.end1Date); e1.setHours(0,0,0,0);
+    const e2 = new Date(s.end2Date); e2.setHours(0,0,0,0);
+    const totalMaint = Math.max(1, (e2 - e1) / 86400000);
+    const doneFrom1 = Math.max(0, (today - e1) / 86400000);
+    const pct2 = Math.min(100, (doneFrom1 / totalMaint) * 100);
+    document.getElementById('r2-pct-label').textContent = Math.round(pct2) + '%';
+    document.getElementById('r2-progress-fill').style.width = pct2 + '%';
+    document.getElementById('r2-status').textContent = Math.round(pct2) + '% 유지중';
+  }
+
+  // 체크인 목록 생성
+  renderCheckins();
+}
+
+function renderCheckins() {
+  const s = settings;
+  if (!s.startDate || !s.end1Date) return;
+  const el = document.getElementById('checkin-list');
+  const start = new Date(s.startDate);
+  const end = new Date(s.end1Date);
+
+  // 월 목록 생성
+  const months = [];
+  let d = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+  while (d <= end) {
+    months.push(new Date(d));
+    d.setMonth(d.getMonth() + 1);
+  }
+  months.push(end); // 최종일
+
+  if (months.length === 0) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">체크인 날짜가 없습니다</div>'; return; }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const start_w = parseFloat(s.startWeight);
+
+  el.innerHTML = months.map((m, i) => {
+    const isLast = i === months.length - 1;
+    const label = isLast ? '🏁 최종 확인' : `${m.getMonth()+1}월 체크인`;
+    const dateStr = m.toISOString().split('T')[0];
+    const isPast = m <= today;
+
+    // 해당 날짜 근처 몸무게 찾기
+    const near = [...weights].filter(w => {
+      const wd = new Date(w.date); wd.setHours(0,0,0,0);
+      const diff = Math.abs((wd - m) / 86400000);
+      return diff <= 3;
+    }).sort((a,b) => a.date.localeCompare(b.date));
+    const recorded = near.length ? near[0] : null;
+
+    let badge = '';
+    let diffText = '';
+    if (recorded) {
+      const diff = recorded.weight - start_w;
+      const sign = diff <= 0 ? '' : '+';
+      const cls = diff <= 0 ? 'good' : 'bad';
+      diffText = `<div class="checkin-diff ${cls}">${sign}${diff.toFixed(1)}kg</div>`;
+      const isGoal = recorded.weight <= parseFloat(s.targetWeight);
+      badge = isGoal ? '<span class="badge-done">달성</span>' : '<span class="badge-miss">미달</span>';
+    } else if (isPast) {
+      badge = '<span class="badge-miss">미기록</span>';
+    } else {
+      badge = '<span class="badge-wait">예정</span>';
+    }
+
+    return `
+      <div class="checkin-item">
+        <div>
+          <div class="checkin-month">${label}</div>
+          <div style="font-size:11px;color:var(--muted)">${dateStr}</div>
+        </div>
+        <div style="text-align:right">
+          ${recorded ? `<div class="checkin-weight">${recorded.weight}kg</div>` : ''}
+          ${diffText}
+          ${badge}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+//  WEIGHT
+// ══════════════════════════════════════════════
+function initWeightDate() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('weight-date').value = today;
+}
+
+function logWeight() {
+  const w = parseFloat(document.getElementById('weight-input').value);
+  const d = document.getElementById('weight-date').value;
+  if (!w || w < 30 || w > 300) { toast('올바른 몸무게를 입력해주세요 (30~300kg)'); return; }
+  if (!d) { toast('날짜를 선택해주세요'); return; }
+
+  // 같은 날짜 덮어쓰기
+  const idx = weights.findIndex(x => x.date === d);
+  if (idx >= 0) weights[idx].weight = w;
+  else weights.push({ date: d, weight: w });
+  weights.sort((a,b) => a.date.localeCompare(b.date));
+  save('weights', weights);
+
+  document.getElementById('weight-input').value = '';
+  toast('✅ 몸무게 기록 완료!');
+  renderWeightPage();
+}
+
+function renderWeightPage() {
+  renderWeightList();
+  renderWeightGraph();
+}
+
+function renderWeightList() {
+  const el = document.getElementById('weight-list');
+  if (!weights.length) { el.innerHTML = '<div class="empty-state"><div class="empty-text" style="font-size:12px">아직 기록이 없어요</div></div>'; return; }
+  const sorted = [...weights].sort((a,b) => b.date.localeCompare(a.date));
+  el.innerHTML = sorted.map((w, i) => {
+    const prev = sorted[i+1];
+    const diff = prev ? w.weight - prev.weight : null;
+    const diffStr = diff !== null
+      ? `<span style="font-size:11px;color:${diff <= 0 ? '#4ade80' : '#ff4d6d'}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}kg</span>`
+      : '';
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:13px">${w.date}</div>
+          ${diffStr}
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent)">${w.weight}<span style="font-size:13px;color:var(--muted)">kg</span></div>
+          <button onclick="deleteWeight('${w.date}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">×</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function deleteWeight(date) {
+  weights = weights.filter(w => w.date !== date);
+  save('weights', weights);
+  renderWeightPage();
+  toast('삭제됐어요');
+}
+
+function renderWeightGraph() {
+  const el = document.getElementById('weight-graph');
+  const s = settings;
+  if (weights.length < 2) {
+    el.innerHTML = `<div class="empty-state" style="width:100%;padding:16px 0"><div class="empty-icon" style="font-size:28px">📊</div><div class="empty-text" style="font-size:12px">2개 이상 기록되면 그래프가 표시됩니다</div></div>`;
+    return;
+  }
+
+  const sorted = [...weights].sort((a,b) => a.date.localeCompare(b.date)).slice(-12);
+  const allVals = sorted.map(w => w.weight);
+  if (s.targetWeight) allVals.push(parseFloat(s.targetWeight));
+  const minV = Math.min(...allVals) - 1;
+  const maxV = Math.max(...allVals) + 1;
+  const range = maxV - minV;
+
+  el.innerHTML = sorted.map((w, i) => {
+    const h = Math.round(((w.weight - minV) / range) * 100);
+    const isLatest = i === sorted.length - 1;
+    return `
+      <div class="wg-bar-wrap">
+        <div class="wg-bar${isLatest ? '' : ''}" style="height:${h}%;background:${isLatest ? 'var(--accent)' : '#444'}"></div>
+        <div class="wg-label">${w.date.slice(5)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+//  DIARY
+// ══════════════════════════════════════════════
+let selectedEmoji = '💪';
+let selectedCat = '식단';
+let currentFilter = 'all';
+
+function selectEmoji(e) {
+  selectedEmoji = e;
+  document.querySelectorAll('.emoji-btn').forEach(b => {
+    b.classList.toggle('selected', b.textContent === e);
+  });
+}
+
+function selectCat(c) {
+  selectedCat = c;
+  document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+  document.getElementById('cat-' + c).classList.add('active');
+  // change emoji set
+  const sets = {
+    '식단': ['🥗','🥑','🍱','🥦','🥕','💧','🍎','🥙'],
+    '운동': ['💪','🏃','🏋️','🧘','🚴','🏊','⚽','🎯'],
+    '기타': ['✨','😤','🔥','😴','📏','🧘','💊','📓'],
+  };
+  document.getElementById('emoji-picker').innerHTML = (sets[c] || sets['기타']).map(e =>
+    `<button class="emoji-btn${e === selectedEmoji ? ' selected' : ''}" onclick="selectEmoji('${e}')">${e}</button>`
+  ).join('');
+}
+
+function addDiary() {
+  const text = document.getElementById('diary-text').value.trim();
+  if (!text) { toast('내용을 입력해주세요'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  diary.unshift({ id: Date.now(), date: today, cat: selectedCat, emoji: selectedEmoji, text });
+  save('diary', diary);
+  document.getElementById('diary-text').value = '';
+  toast('🎉 인증 완료!');
+  renderDiary(currentFilter);
+}
+
+function filterDiary(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderDiary(f);
+}
+
+function renderDiary(filter) {
+  const el = document.getElementById('diary-list');
+  let list = filter === 'all' ? diary : diary.filter(d => d.cat === filter);
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">아직 인증이 없어요<br>오늘의 노력을 기록해보세요!</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(d => `
+    <div class="diary-entry">
+      <div class="entry-header">
+        <span class="entry-cat ${d.cat}">${d.cat}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="entry-date">${d.date}</span>
+          <button class="entry-delete" onclick="deleteDiary(${d.id})">×</button>
+        </div>
+      </div>
+      <div class="entry-emoji">${d.emoji}</div>
+      <div class="entry-text">${escapeHtml(d.text)}</div>
+    </div>`).join('');
+}
+
+function deleteDiary(id) {
+  diary = diary.filter(d => d.id !== id);
+  save('diary', diary);
+  renderDiary(currentFilter);
+  toast('삭제됐어요');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════
+let checkinEnabled = true;
+
+function loadSettingsForm() {
+  const s = settings;
+  const fields = {
+    'set-name': s.name,
+    'set-start-weight': s.startWeight,
+    'set-target-weight': s.targetWeight,
+    'set-start-date': s.startDate,
+    'set-end1-date': s.end1Date,
+    'set-end2-date': s.end2Date,
+    'set-allowance': s.allowance,
+    'set-penalty1': s.penalty1,
+    'set-penalty2': s.penalty2,
+    'set-penalty-use': s.penaltyUse,
+  };
+  for (const [id, val] of Object.entries(fields)) {
+    const el = document.getElementById(id);
+    if (el && val !== undefined && val !== null) el.value = val;
+  }
+  checkinEnabled = s.checkinEnabled !== false;
+  const toggle = document.getElementById('checkin-toggle');
+  toggle.className = 'toggle' + (checkinEnabled ? ' on' : '');
+
+  // default 2차 마감일
+  if (!s.end2Date) {
+    const yr = new Date().getFullYear();
+    document.getElementById('set-end2-date').value = `${yr}-12-31`;
+  }
+
+  renderVerdicts();
+}
+
+function toggleCheckin() {
+  checkinEnabled = !checkinEnabled;
+  const toggle = document.getElementById('checkin-toggle');
+  toggle.className = 'toggle' + (checkinEnabled ? ' on' : '');
+}
+
+function saveSettings() {
+  const get = id => document.getElementById(id).value;
+  const newS = {
+    name: get('set-name'),
+    startWeight: parseFloat(get('set-start-weight')) || null,
+    targetWeight: parseFloat(get('set-target-weight')) || null,
+    startDate: get('set-start-date'),
+    end1Date: get('set-end1-date'),
+    end2Date: get('set-end2-date'),
+    allowance: parseFloat(get('set-allowance')) || 1.5,
+    penalty1: parseInt(get('set-penalty1')) || null,
+    penalty2: parseInt(get('set-penalty2')) || null,
+    penaltyUse: get('set-penalty-use'),
+    checkinEnabled,
+  };
+
+  if (!newS.startWeight || !newS.targetWeight) { toast('몸무게를 입력해주세요'); return; }
+  if (newS.targetWeight >= newS.startWeight) { toast('목표 몸무게는 현재보다 낮아야 해요'); return; }
+
+  settings = newS;
+  save('settings', settings);
+
+  // 시작 몸무게를 weights에 시작일로 추가
+  if (newS.startDate && newS.startWeight) {
+    const existing = weights.find(w => w.date === newS.startDate);
+    if (!existing) {
+      weights.push({ date: newS.startDate, weight: newS.startWeight });
+      weights.sort((a,b) => a.date.localeCompare(b.date));
+      save('weights', weights);
+    }
+  }
+
+  toast('✅ 설정이 저장되었어요!');
+}
+
+function checkResult1() {
+  const w = parseFloat(document.getElementById('result1-weight').value);
+  if (!w || !settings.targetWeight) { toast('몸무게와 목표를 먼저 설정하세요'); return; }
+  const win = w <= parseFloat(settings.targetWeight);
+  const p = settings.penalty1 ? settings.penalty1.toLocaleString() + '원' : '벌금';
+  const wrap = document.getElementById('verdict1-wrap');
+  if (win) {
+    wrap.innerHTML = `<div class="result-verdict win"><div class="verdict-emoji">🎉</div><div class="verdict-label" style="color:#4ade80">1차 달성!</div><div class="verdict-sub">${w}kg → 목표 ${settings.targetWeight}kg 달성<br>수고했어요! 🏆</div></div>`;
+  } else {
+    wrap.innerHTML = `<div class="result-verdict lose"><div class="verdict-emoji">😢</div><div class="verdict-label" style="color:var(--accent2)">1차 실패</div><div class="verdict-sub">${w}kg → 목표 ${settings.targetWeight}kg 미달성<br>${p} 납부 😭</div></div>`;
+  }
+}
+
+function checkResult2() {
+  const w = parseFloat(document.getElementById('result2-weight').value);
+  if (!w || !settings.targetWeight) { toast('몸무게와 목표를 먼저 설정하세요'); return; }
+  const allow = parseFloat(settings.allowance) || 1.5;
+  const target = parseFloat(settings.targetWeight);
+  const win = w <= target + allow;
+  const p = settings.penalty2 ? settings.penalty2.toLocaleString() + '원' : '벌금';
+  const wrap = document.getElementById('verdict2-wrap');
+  if (win) {
+    wrap.innerHTML = `<div class="result-verdict win"><div class="verdict-emoji">💎</div><div class="verdict-label" style="color:#4ade80">2차 유지!</div><div class="verdict-sub">${w}kg → 목표 ${target}±${allow}kg 유지<br>진짜 대단해요! 👑</div></div>`;
+  } else {
+    wrap.innerHTML = `<div class="result-verdict lose"><div class="verdict-emoji">😤</div><div class="verdict-label" style="color:var(--accent2)">2차 실패</div><div class="verdict-sub">${w}kg → 목표 ${target}±${allow}kg 초과<br>${p} 납부 😭</div></div>`;
+  }
+}
+
+function renderVerdicts() {
+  // keep existing verdict if any
+}
+
+function exportData() {
+  const data = { settings, weights, diary, exported: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `diet_bet_${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('📤 데이터 내보내기 완료');
+}
+
+function confirmReset() {
+  document.getElementById('reset-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('reset-modal').classList.remove('open');
+}
+function doReset() {
+  localStorage.removeItem(KEYS.settings);
+  localStorage.removeItem(KEYS.weights);
+  localStorage.removeItem(KEYS.diary);
+  settings = {}; weights = []; diary = [];
+  closeModal();
+  toast('초기화 완료');
+  goPage('home');
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+(function init() {
+  initWeightDate();
+  renderHome();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
