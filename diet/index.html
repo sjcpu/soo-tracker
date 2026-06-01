@@ -3,43 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#f5f5f0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="다이어트">
 <link rel="manifest" href="manifest.json">
 <title>다이어트 트래커</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --surface2: #1e1e1e;
-  --border: #2a2a2a;
-  --accent: #c8f135;
-  --accent2: #ff4d4d;
-  --text: #f0f0f0;
-  --text2: #888;
-  --text3: #555;
+  --bg: #f5f5f0;
+  --surface: #ffffff;
+  --surface2: #efefea;
+  --border: #e0e0d8;
+  --accent: #4a9e2f;
+  --accent-light: #e8f5e2;
+  --accent2: #e03030;
+  --text: #1a1a1a;
+  --text2: #666;
+  --text3: #aaa;
   --radius: 16px;
-  --done-bg: #1a2600;
-  --done-border: #c8f135;
+  --done-bg: #e8f5e2;
+  --done-border: #4a9e2f;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; overscroll-behavior: none; }
 
 /* LAYOUT */
 .app { max-width: 430px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-.header { padding: 20px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.header { padding: 20px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface); }
 .header-title { font-family: 'Black Han Sans', sans-serif; font-size: 22px; color: var(--accent); letter-spacing: -0.5px; }
 .header-right { display: flex; align-items: center; gap: 10px; }
 .streak-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; font-size: 12px; color: var(--text2); }
-.streak-badge.on { border-color: var(--accent); color: var(--accent); }
+.streak-badge.on { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
 /* TABS */
-.tabs { display: flex; border-bottom: 1px solid var(--border); }
+.tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); }
 .tab { flex: 1; text-align: center; padding: 12px; font-size: 13px; color: var(--text3); cursor: pointer; transition: color 0.2s; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
 
 /* SCROLL AREA */
 .page { flex: 1; overflow-y: auto; padding: 20px; display: none; }
@@ -47,14 +49,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
 /* DATE NAV */
 .date-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.date-nav button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.date-nav button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); }
 .date-nav button:active { background: var(--surface2); }
 .date-info { text-align: center; }
 .date-main { font-size: 16px; font-weight: 700; color: var(--text); }
 .date-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
 
 /* WEIGHT INPUT */
-.weight-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.weight-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; box-shadow: var(--shadow); }
 .weight-label { font-size: 13px; color: var(--text2); }
 .weight-input-wrap { display: flex; align-items: center; gap: 6px; }
 .weight-input { width: 72px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 16px; color: var(--text); text-align: right; font-family: 'Noto Sans KR', sans-serif; }
@@ -70,24 +72,24 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
 
 /* COMMENT */
-.comment { background: var(--surface); border-left: 3px solid var(--accent2); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+.comment { background: var(--surface); border-left: 3px solid var(--accent2); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; box-shadow: var(--shadow); }
 .comment.good { border-left-color: var(--accent); }
 
 /* TASKS */
 .tasks-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.task-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; user-select: none; }
+.task-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; user-select: none; box-shadow: var(--shadow); }
 .task-item:active { transform: scale(0.98); }
 .task-item.done { background: var(--done-bg); border-color: var(--done-border); }
 .task-check { width: 22px; height: 22px; min-width: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; }
-.task-item.done .task-check { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+.task-item.done .task-check { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
 .task-text { flex: 1; }
 .task-name { font-size: 14px; font-weight: 500; color: var(--text); }
 .task-item.done .task-name { color: var(--accent); }
 .task-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.task-item.done .task-desc { color: #5a7a20; }
+.task-item.done .task-desc { color: #6aaa40; }
 
 /* SAVE BTN */
-.save-btn { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; color: #000; cursor: pointer; margin-top: 8px; font-family: 'Black Han Sans', sans-serif; letter-spacing: 0.5px; transition: opacity 0.15s; }
+.save-btn { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; margin-top: 8px; font-family: 'Black Han Sans', sans-serif; letter-spacing: 0.5px; transition: opacity 0.15s; box-shadow: 0 2px 8px rgba(74,158,47,0.3); }
 .save-btn:active { opacity: 0.85; }
 
 /* WEEKLY */
@@ -95,13 +97,13 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .week-col { text-align: center; }
 .week-day-label { font-size: 10px; color: var(--text3); margin-bottom: 5px; }
 .week-dot { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 13px; background: var(--surface); color: var(--text3); }
-.week-dot.great { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
-.week-dot.ok { background: #332600; color: #fac775; border-color: #fac775; }
-.week-dot.bad { background: #2a0000; color: #ff8080; border-color: #ff4d4d; }
-.week-dot.today-ring { box-shadow: 0 0 0 2px #fff; }
+.week-dot.great { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+.week-dot.ok { background: #fff8e6; color: #b8860b; border-color: #e6c84a; }
+.week-dot.bad { background: #fff0f0; color: #cc3333; border-color: #ffaaaa; }
+.week-dot.today-ring { box-shadow: 0 0 0 2px var(--accent); }
 
 /* GOAL SECTION */
-.section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+.section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
 .section-card-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
 .goal-numbers { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .goal-num { text-align: center; }
@@ -109,26 +111,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .goal-num-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
 .goal-arrow { font-size: 20px; color: var(--text3); }
 .goal-bar { height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
-.goal-fill { height: 100%; background: linear-gradient(90deg, #c8f135, #7bc900); border-radius: 999px; transition: width 0.5s; }
+.goal-fill { height: 100%; background: linear-gradient(90deg, #4a9e2f, #7bc900); border-radius: 999px; transition: width 0.5s; }
 .goal-caption { font-size: 12px; color: var(--text2); text-align: center; }
 
-/* PLAN PAGE */
-.plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-.plan-icon { font-size: 20px; margin-bottom: 8px; }
-.plan-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.plan-rule { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 13px; color: var(--text2); line-height: 1.5; }
-.plan-rule::before { content: "—"; color: var(--accent); flex-shrink: 0; }
-
-.phase-badge { display: inline-block; background: var(--accent); color: #000; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-bottom: 10px; }
-.phase-card { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 14px; margin-bottom: 10px; }
-.phase-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
-.phase-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
-
 /* INSTALL BANNER */
-.install-banner { background: var(--surface2); border: 1px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.install-banner { background: var(--accent-light); border: 1px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
 .install-icon { font-size: 22px; }
 .install-text { flex: 1; font-size: 12px; color: var(--text2); line-height: 1.5; }
-.install-btn { background: var(--accent); border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 700; color: #000; cursor: pointer; white-space: nowrap; }
+.install-btn { background: var(--accent); border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; white-space: nowrap; }
 
 .divider { height: 1px; background: var(--border); margin: 20px 0; }
 </style>
@@ -145,7 +135,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   <div class="tabs">
     <div class="tab active" onclick="switchTab('today')">오늘</div>
     <div class="tab" onclick="switchTab('week')">주간</div>
-    <div class="tab" onclick="switchTab('plan')">작전</div>
   </div>
 
   <!-- TODAY PAGE -->
@@ -176,7 +165,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <div class="progress-block">
       <div class="progress-top">
         <div class="progress-pct" id="progressPct">0%</div>
-        <div class="progress-label" id="progressLabel">0 / 7 완료</div>
+        <div class="progress-label" id="progressLabel">0 / 6 완료</div>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill" style="width:0%"></div>
@@ -225,63 +214,16 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div id="recentList"></div>
     </div>
   </div>
-
-  <!-- PLAN PAGE -->
-  <div class="page" id="page-plan">
-    <div class="tasks-title" style="margin-bottom:14px">3개월 작전 계획</div>
-
-    <div class="phase-card">
-      <div class="phase-badge">1~2주차</div>
-      <div class="phase-title">점심만 고친다</div>
-      <div class="phase-desc">훈제란+아몬드브리즈에 고구마 1개 or 바나나 1개 추가. 딱 이것만. 나머지 건들지 마라.</div>
-    </div>
-    <div class="phase-card">
-      <div class="phase-badge">3~4주차</div>
-      <div class="phase-title">주말 배달 조절</div>
-      <div class="phase-desc">금요일 저녁 or 토요일 점심 중 하나만 배달. 둘 다는 안 된다.</div>
-    </div>
-    <div class="phase-card">
-      <div class="phase-badge">5주차~</div>
-      <div class="phase-title">간식 룰 + 운동 시작</div>
-      <div class="phase-desc">빵/과자 주중 1회, 주말 1회로 고정. 퇴근 후 30분 운동 추가.</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="plan-card">
-      <div class="plan-icon">🍽️</div>
-      <div class="plan-title">식단 원칙</div>
-      <div class="plan-rule">아침: 훈제란 유지 (굶지 마라)</div>
-      <div class="plan-rule">점심: 지금보다 한 가지 추가</div>
-      <div class="plan-rule">저녁: 파스타 유지, 디저트 줄이기</div>
-      <div class="plan-rule">야식: 밤 9시 이후 절대 금지</div>
-    </div>
-    <div class="plan-card">
-      <div class="plan-icon">🚫</div>
-      <div class="plan-title">절대 금지</div>
-      <div class="plan-rule">스트레스 받으면 물 한 컵 + 10분 걷기</div>
-      <div class="plan-rule">배달음식 주 2회 초과 금지</div>
-      <div class="plan-rule">빈속 커피 금지 (소화 때문에)</div>
-      <div class="plan-rule">식후 바로 눕기 금지</div>
-    </div>
-    <div class="plan-card">
-      <div class="plan-icon">💧</div>
-      <div class="plan-title">생활 습관</div>
-      <div class="plan-rule">물 하루 충분히, 식간에 나눠 마시기</div>
-      <div class="plan-rule">수면 7시간 이상</div>
-      <div class="plan-rule">식사 천천히, 식전 물 한 컵</div>
-    </div>
-  </div>
 </div>
 
 <script>
 const TASKS = [
-  { id: "lunch", name: "퇴근 직후 운동", desc: "칼소폭 등 2Set" },
-  { id: "no_night", name: "소식", desc: "먹자마자 양치하기" },
-  { id: "snack", name: "스트레칭", desc: "다노 / 폼롤러" },
-  { id: "delivery", name: "독서", desc: "최소 30p 읽기" },
-  { id: "water", name: "물 2L", desc: "하루 종일 나눠 마시기" },
-  { id: "no_lie", name: "클린식", desc: "과자, 아이스크림, 빵, 배달, 액상과당 금지" },
+  { id: "exercise",  name: "퇴근 직후 운동",  desc: "칼소폭 등 2Set" },
+  { id: "eat_small", name: "소식",             desc: "먹자마자 양치하기" },
+  { id: "stretch",   name: "스트레칭",         desc: "다노 / 폼롤러" },
+  { id: "read",      name: "독서",             desc: "최소 30p 읽기" },
+  { id: "water",     name: "물 2L",            desc: "하루 종일 나눠 마시기" },
+  { id: "clean_eat", name: "클린식",           desc: "과자, 아이스크림, 빵, 배달, 액상과당 금지" },
 ];
 
 const COMMENTS = {
@@ -292,9 +234,16 @@ const COMMENTS = {
   zero: ["0점. 오늘 하루 완전히 날렸다. 내일 두 배로 해라.", "아무것도 안 했냐? 트래커 켠 것만 칭찬해주겠다."],
 };
 
-function getComment(pct) {
-  const arr = pct >= 100 ? COMMENTS[100] : pct >= 71 ? COMMENTS.high : pct >= 43 ? COMMENTS.mid : pct > 0 ? COMMENTS.low : COMMENTS.zero;
-  return arr[Math.floor(Math.random() * arr.length)];
+// 하루에 한 번만 comment를 뽑아서 캐싱 (체크할 때마다 바뀌지 않게)
+const commentCache = {};
+function getComment(pct, dateKey) {
+  const bucket = pct >= 100 ? "100" : pct >= 71 ? "high" : pct >= 43 ? "mid" : pct > 0 ? "low" : "zero";
+  const cacheKey = dateKey + "_" + bucket;
+  if (!commentCache[cacheKey]) {
+    const arr = COMMENTS[bucket] || COMMENTS.low;
+    commentCache[cacheKey] = arr[Math.floor(Math.random() * arr.length)];
+  }
+  return commentCache[cacheKey];
 }
 
 let data = {};
@@ -312,8 +261,9 @@ function formatDate(offset = 0) {
   return { main: `${d.getMonth()+1}월 ${d.getDate()}일${tag}`, sub: days[d.getDay()] + "요일" };
 }
 
-function load() { try { data = JSON.parse(localStorage.getItem("diet2024") || "{}"); } catch(e) { data = {}; } }
-function save() { try { localStorage.setItem("diet2024", JSON.stringify(data)); } catch(e) {} }
+// 수정 1: localStorage 키 diet2026으로 변경
+function load() { try { data = JSON.parse(localStorage.getItem("diet2026") || "{}"); } catch(e) { data = {}; } }
+function save() { try { localStorage.setItem("diet2026", JSON.stringify(data)); } catch(e) {} }
 function getDay(offset = currentOffset) {
   const k = dateKey(offset);
   if (!data[k]) data[k] = { tasks: {}, weight: null };
@@ -341,6 +291,10 @@ function toggleTask(id) {
   day.tasks[id] = !day.tasks[id];
   save();
   renderTasks();
+  // 수정 6: 태스크 체크 시 주간 탭도 즉시 갱신 (이미 열려있는 경우)
+  if (document.getElementById("page-week").classList.contains("active")) {
+    renderWeekly(); renderGoal();
+  }
 }
 
 function updateProgress() {
@@ -352,7 +306,8 @@ function updateProgress() {
   document.getElementById("progressFill").style.width = pct + "%";
   const box = document.getElementById("commentBox");
   box.className = "comment" + (pct >= 70 ? " good" : "");
-  box.textContent = done > 0 ? getComment(pct) : "미션을 체크하면 평가가 나온다.";
+  // 수정 7: comment를 날짜+구간별로 캐싱해서 체크마다 바뀌지 않게
+  box.textContent = done > 0 ? getComment(pct, dateKey(currentOffset)) : "미션을 체크하면 평가가 나온다.";
 }
 
 function saveToday() {
@@ -365,6 +320,7 @@ function saveToday() {
   save();
   renderWeekly();
   renderGoal();
+  renderStreak();
   const btn = document.querySelector(".save-btn");
   btn.textContent = "저장 완료 ✓";
   setTimeout(() => btn.textContent = "저장", 1500);
@@ -382,10 +338,11 @@ function changeDay(delta) {
   renderTasks();
 }
 
+// 수정 8: streak은 항상 오늘(offset=0) 기준으로 계산
 function calcStreak() {
   let s = 0;
   for (let i = 0; i >= -365; i--) {
-    const k = dateKey(i);
+    const k = dateKey(i); // 항상 오늘 기준
     const d = data[k];
     if (!d) break;
     const done = Object.values(d.tasks || {}).filter(Boolean).length;
@@ -418,11 +375,10 @@ function renderWeekly() {
       else if (pct >= 0.5) { cls = "ok"; label = "△"; }
       else { cls = "bad"; label = "✗"; }
     }
-    if (i === 0) cls += " today-ring";
+    if (i === 0) cls += (cls ? " " : "") + "today-ring";
     return `<div class="week-col"><div class="week-day-label">${dn}</div><div class="week-dot ${cls}">${label}</div></div>`;
   }).join("");
 
-  // recent list
   const list = document.getElementById("recentList");
   list.innerHTML = Array.from({length:7},(_,i)=>i-6).reverse().map(i => {
     const d = new Date(); d.setDate(d.getDate() + i);
@@ -431,7 +387,7 @@ function renderWeekly() {
     const done = dd ? Object.values(dd.tasks||{}).filter(Boolean).length : 0;
     const pct = Math.round(done/TASKS.length*100);
     const w = dd && dd.weight ? dd.weight + "kg" : "--";
-    const color = pct >= 85 ? "var(--accent)" : pct >= 50 ? "#fac775" : pct > 0 ? "#ff8080" : "var(--text3)";
+    const color = pct >= 85 ? "var(--accent)" : pct >= 50 ? "#b8860b" : pct > 0 ? "#cc3333" : "var(--text3)";
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
       <span style="color:var(--text2)">${k.slice(5)}</span>
       <span style="color:var(--text2)">${w}</span>
@@ -455,20 +411,27 @@ function renderGoal() {
   document.getElementById("goalCaption").textContent = `${lost.toFixed(1)}kg 감량 / 목표 ${total}kg (${pct}%)`;
 }
 
+// 수정 3: 탭 배열에서 'plan' 제거
 function switchTab(tab) {
-  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", ["today","week","plan"][i]===tab));
+  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", ["today","week"][i]===tab));
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id==="page-"+tab));
   if (tab === "week") { renderWeekly(); renderGoal(); }
 }
 
-// PWA install
+// 수정 5: PWA .userChoice 버그 수정
 let deferredPrompt;
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault(); deferredPrompt = e;
   document.getElementById("installBanner").style.display = "flex";
 });
 document.getElementById("installBtn").addEventListener("click", () => {
-  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.choice?.then(()=>{ document.getElementById("installBanner").style.display="none"; }); }
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      document.getElementById("installBanner").style.display = "none";
+      deferredPrompt = null;
+    });
+  }
 });
 
 // INIT
