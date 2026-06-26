@@ -1,6 +1,6 @@
 {
-  "name": "갓생",
-  "short_name": "갓생",
+  "name": "SOO-키우기",
+  "short_name": "SOO-키우기",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
